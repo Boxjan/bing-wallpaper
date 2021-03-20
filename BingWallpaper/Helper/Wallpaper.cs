@@ -28,8 +28,8 @@ namespace BingWallpaper
 
         public static void Set(Image img, Style style)
         {
-            string tempPath = Path.Combine(Path.GetTempPath(), "wallpaper.bmp");
-            img.Save(tempPath, System.Drawing.Imaging.ImageFormat.Bmp);
+            string tempPath = Path.Combine(Path.GetTempPath(), "wallpaper.jpg");
+            img.Save(tempPath, System.Drawing.Imaging.ImageFormat.Jpeg);
 
             RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true);
             if (style == Style.Stretched)

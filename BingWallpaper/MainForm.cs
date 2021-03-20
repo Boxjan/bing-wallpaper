@@ -28,14 +28,25 @@ namespace BingWallpaper
             SetStartup(_settings.LaunchOnStartup);
 
             AddTrayIcons();
-            
-            // Set wallpaper every 24 hours
-            var timer = new System.Timers.Timer();
-            timer.Interval = 1000 * 60 * 60 * 24; // 24 hours
-            timer.AutoReset = true;
-            timer.Enabled = true;
-            timer.Elapsed += (s, e) => SetWallpaper();
-            timer.Start();
+
+            // Set wallpaper at local time 0:0:5
+            var now = DateTime.Now;
+            var nextDay = now.AddDays(1);
+            var nextDayZeroTime = new DateTime(nextDay.Year, nextDay.Month, nextDay.Day, 0, 0, 5);
+
+            var firstTimer = new System.Timers.Timer((nextDayZeroTime - now).TotalMilliseconds);
+            firstTimer.AutoReset = false;
+            firstTimer.Enabled = true;
+            firstTimer.Elapsed += (fs, fe) => {
+                var secondTimer = new System.Timers.Timer(1000 * 60 * 60 * 24); // 24 hours
+                secondTimer.AutoReset = true;
+                secondTimer.Enabled = true;
+                secondTimer.Elapsed += (ss, se) => SetWallpaper();
+                secondTimer.Start();
+
+                SetWallpaper();
+            };
+            firstTimer.Start();
 
             // Set wallpaper on first run
             SetWallpaper();
@@ -207,7 +218,7 @@ namespace BingWallpaper
 
         private void ShowSetWallpaperNotification()
         {
-            _trayIcon.BalloonTipText = "Wallpaper has been set to Bing's image of the day!";
+            _trayIcon.BalloonTipText = "Wallpaper has been set to Bing's image of the day at " + DateTime.Now.ToString("R");
             _trayIcon.BalloonTipIcon = ToolTipIcon.Info;
             _trayIcon.Visible = true;
             _trayIcon.ShowBalloonTip(5000);

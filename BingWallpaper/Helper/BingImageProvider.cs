@@ -14,11 +14,11 @@ namespace BingWallpaper
             string baseUri = "https://www.bing.com";
             using (var client = new HttpClient())
             {
-                using (var jsonStream = await client.GetStreamAsync("http://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=en-US"))
+                using (var jsonStream = await client.GetStreamAsync("https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=1&mkt=en-US&uhd=1&uhdwidth=3840&uhdheight=2160"))
                 {
                     var ser = new DataContractJsonSerializer(typeof(Result));
                     var res = (Result)ser.ReadObject(jsonStream);
-                    using (var imgStream = await client.GetStreamAsync(new Uri(baseUri + res.images[0].URL)))
+                    using (var imgStream = await client.GetStreamAsync(new Uri(baseUri + res.images[0].URLBase + "_UHD.jpg")))
                     {
                         return new BingImage(Image.FromStream(imgStream), res.images[0].Copyright, res.images[0].CopyrightLink);
                     }
